@@ -19,6 +19,10 @@ var HelloWorldLayer = cc.Layer.extend({
         var rnd = this.random(this.size.width/2 - 2*step, this.size.width/2 + 2*step);
         zanahoriaTemp.setPosition(rnd, this.size.height);
         this.addChild(zanahoriaTemp, 2);
+        var time = 10;
+        if(this.score >= 30) time = 8;
+        if(this.score >= 50) time = 6;
+        if(this.score >= 70) time = 4;
         zanahoriaTemp.runAction( cc.moveTo(10, zanahoriaTemp.getPositionX(), -100) );
 		this.zanahoria.push(zanahoriaTemp);
         
@@ -52,11 +56,14 @@ var HelloWorldLayer = cc.Layer.extend({
     checkCollision : function(){
         for(var i=0; i<this.zanahoria.length; i++){
             if(Math.abs(this.zanahoria[i].getPositionX()-this.sprConejo.getPositionX())<=(this.zanahoria[i].width+this.sprConejo.width)/3  &&
-              Math.abs(this.zanahoria[i].getPositionY()-this.sprConejo.getPositionY())<=(this.zanahoria[i].height+this.sprConejo.height)/3 &&
+              Math.abs(this.zanahoria[i].getPositionY()-this.sprConejo.getPositionY())<=(this.zanahoria[i].height+this.sprConejo.height)/2 &&
               this.zanahoria[i].isVisible()){
                 this.zanahoria[i].setVisible(false);
                 var num = parseInt(this.score.string);
                 num++;
+                if(num >= 100){
+                    alert("Usted gano!!! Presione F5 para volver a jugar");
+                }
                 this.score.string = num;
             }
         }
