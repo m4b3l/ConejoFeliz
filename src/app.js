@@ -51,8 +51,8 @@ var HelloWorldLayer = cc.Layer.extend({
     
     checkCollision : function(){
         for(var i=0; i<this.zanahoria.length; i++){
-            if(Math.abs(this.zanahoria[i].getPositionX()-this.sprConejo.getPositionX())<=50  &&
-              Math.abs(this.zanahoria[i].getPositionY()-this.sprConejo.getPositionY())<=150 &&
+            if(Math.abs(this.zanahoria[i].getPositionX()-this.sprConejo.getPositionX())<=(this.zanahoria[i].width+this.sprConejo.width)/2  &&
+              Math.abs(this.zanahoria[i].getPositionY()-this.sprConejo.getPositionY())<=(this.zanahoria[i].height+this.sprConejo.height)/2 &&
               this.zanahoria[i].isVisible()){
                 this.zanahoria[i].setVisible(false);
                 var num = parseInt(this.score.string);
@@ -61,8 +61,8 @@ var HelloWorldLayer = cc.Layer.extend({
             }
         }
         for(var i=0; i<this.bombas.length; i++){
-            if(Math.abs(this.bombas[i].getPositionX()-this.sprConejo.getPositionX())<=50  &&
-              Math.abs(this.bombas[i].getPositionY()-this.sprConejo.getPositionY())<=200 &&
+            if(Math.abs(this.bombas[i].getPositionX()-this.sprConejo.getPositionX())<=(this.bombas[i].width+this.sprConejo.width)/2  &&
+              Math.abs(this.bombas[i].getPositionY()-this.sprConejo.getPositionY())<=(this.bombas[i].height+this.sprConejo.height)/2 &&
               this.bombas[i].isVisible()){
                 this.bombas[i].setVisible(false);
                 var num = parseInt(this.score.string);
