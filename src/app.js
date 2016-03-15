@@ -23,7 +23,7 @@ var HelloWorldLayer = cc.Layer.extend({
         if(this.score >= 30) time = 8;
         if(this.score >= 50) time = 6;
         if(this.score >= 70) time = 4;
-        zanahoriaTemp.runAction( cc.moveTo(10, zanahoriaTemp.getPositionX(), -100) );
+        zanahoriaTemp.runAction( cc.moveTo(time, zanahoriaTemp.getPositionX(), -100) );
 		this.zanahoria.push(zanahoriaTemp);
         
     },
