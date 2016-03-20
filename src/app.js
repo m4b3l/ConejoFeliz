@@ -6,6 +6,8 @@ var HelloWorldLayer = cc.Layer.extend({
     size:null,
     zanahoria:[],
     bombas:[],
+    hearts:[],
+    idHearts:null,
     score:null,
     fin:false,
     
@@ -19,10 +21,12 @@ var HelloWorldLayer = cc.Layer.extend({
         var rnd = this.random(this.size.width/2 - 2*step, this.size.width/2 + 2*step);
         zanahoriaTemp.setPosition(rnd, this.size.height);
         this.addChild(zanahoriaTemp, 2);
-        var time = 10;
-        if(this.score >= 30) time = 8;
-        if(this.score >= 50) time = 6;
-        if(this.score >= 70) time = 4;
+        var time = 5;
+        var num = parseInt(this.score.string);
+        if(num >= 30) time = 4;
+        if(num >= 50) time = 3;
+        if(num >= 70) time = 2;
+        if(num >= 95) time = 1;
         zanahoriaTemp.runAction( cc.moveTo(time, zanahoriaTemp.getPositionX(), -100) );
 		this.zanahoria.push(zanahoriaTemp);
         
@@ -53,6 +57,14 @@ var HelloWorldLayer = cc.Layer.extend({
         }
     },
     
+    restore : function() 
+    {
+        var curScene = cc.director.getRunningScene();
+        var allChildren = curScene.getChildren();
+        allChildren[0].sprConejo.initWithFile(res.conejo_png);
+        cc.director.resume();
+    },
+    
     checkCollision : function(){
         for(var i=0; i<this.zanahoria.length; i++){
             if(Math.abs(this.zanahoria[i].getPositionX()-this.sprConejo.getPositionX())<=(this.zanahoria[i].width+this.sprConejo.width)/3  &&
@@ -61,9 +73,6 @@ var HelloWorldLayer = cc.Layer.extend({
                 this.zanahoria[i].setVisible(false);
                 var num = parseInt(this.score.string);
                 num++;
-                if(num >= 100){
-                    alert("Usted gano!!! Presione F5 para volver a jugar");
-                }
                 this.score.string = num;
             }
         }
@@ -71,15 +80,24 @@ var HelloWorldLayer = cc.Layer.extend({
             if(Math.abs(this.bombas[i].getPositionX()-this.sprConejo.getPositionX())<=(this.bombas[i].width+this.sprConejo.width)/3  &&
               Math.abs(this.bombas[i].getPositionY()-this.sprConejo.getPositionY())<=(this.bombas[i].height+this.sprConejo.height)/3 &&
               this.bombas[i].isVisible()){
+                this.hearts[this.idHearts].setVisible(false);
                 this.bombas[i].setVisible(false);
-                var num = parseInt(this.score.string);
-                num-=10;
-                if(num < 0){
-                    alert("Usted perdio!!! Presione F5 para volver a jugar");
-                }
-                this.score.string = num;
+                this.idHearts--;
+                this.sprConejo.initWithFile(res.muerto_png);
+                cc.director.pause();
+                setTimeout(this.restore, 200);
             }
         }
+    },
+    
+    endGame : function(){
+        if(this.idHearts < 0){
+            cc.LoaderScene.preload(g_resources, function () {
+                cc.director.runScene(new HelloWorldScene());
+            }, this);
+            cc.game.run();
+        }
+        
     },
     
     ctor:function () {
@@ -97,19 +115,53 @@ var HelloWorldLayer = cc.Layer.extend({
         this.sprConejo.setPosition(this.size.width / 2,this.size.height * 0.15);
         this.addChild(this.sprConejo, 1);
         
+        //posicionando corazones
+        this.idHearts = 4;
+        var step = this.size.width/20;
+        for(var i=0; i<5; i++){
+            var temp = new cc.Sprite(res.vida_png);
+            temp.setPosition(this.size.width/2 + (4-i)*step, this.size.height - this.size.height/15);
+            temp.setScale(0.5, 0.5);
+            this.hearts.push(temp);
+            this.addChild(temp);
+        }
+        
+        //posicionando score
         this.score = new cc.LabelTTF("0", "Arial", 24);
         this.score.setPosition( (this.size.width/2)+(this.size.width/5), this.size.height/15);
         this.addChild(this.score, 5);
         
         this.schedule(this.lloverZanahoria,3);
         this.schedule(this.lloverBomba,10);
-        this.schedule(this.checkCollision,1);
+        this.schedule(this.checkCollision,0.2);
+        this.schedule(this.endGame,0.15);
             
         cc.eventManager.addListener(
         {
             event: cc.EventListener.KEYBOARD,
             onKeyPressed: this.mover
         }, this);
+        
+        return true;
+    }
+});
+
+var gameOverLayer = cc.Layer.extend({
+    sprFondo:null,
+    size:null,
+    
+    ctor:function () {
+        this._super();
+        //Obteniendo el tamaño de la pantalla
+        this.size = cc.winSize;
+        
+        //posicionando la imagen de fondo
+        this.sprFondo = new cc.Sprite(res.menu_png);
+        this.sprFondo.setPosition(this.size.width / 2, this.size.height / 2);
+        this.addChild(this.sprFondo, 0);
+        
+        var button1 = new cc.ControlButton("Jugar otra vez", res.buttonBack_png, "Arial");
+        this.addChild(button1);
         
         return true;
     }
