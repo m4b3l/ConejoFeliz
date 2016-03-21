@@ -122,7 +122,7 @@ var HelloWorldLayer = cc.Layer.extend({
             var temp = new cc.Sprite(res.vida_png);
             temp.setPosition(this.size.width/2 + (4-i)*step, this.size.height - this.size.height/15);
             temp.setScale(0.5, 0.5);
-            this.hearts.push(temp);
+            this.hearts[i] = temp;
             this.addChild(temp);
         }
         
@@ -141,27 +141,6 @@ var HelloWorldLayer = cc.Layer.extend({
             event: cc.EventListener.KEYBOARD,
             onKeyPressed: this.mover
         }, this);
-        
-        return true;
-    }
-});
-
-var gameOverLayer = cc.Layer.extend({
-    sprFondo:null,
-    size:null,
-    
-    ctor:function () {
-        this._super();
-        //Obteniendo el tamaño de la pantalla
-        this.size = cc.winSize;
-        
-        //posicionando la imagen de fondo
-        this.sprFondo = new cc.Sprite(res.menu_png);
-        this.sprFondo.setPosition(this.size.width / 2, this.size.height / 2);
-        this.addChild(this.sprFondo, 0);
-        
-        var button1 = new cc.ControlButton("Jugar otra vez", res.buttonBack_png, "Arial");
-        this.addChild(button1);
         
         return true;
     }
